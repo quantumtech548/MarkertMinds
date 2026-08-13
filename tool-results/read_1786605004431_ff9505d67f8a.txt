@@ -1,0 +1,731 @@
+     1→'use client';
+     2→
+     3→import { useEffect, useRef, useState, useCallback } from 'react';
+     4→import { motion } from 'framer-motion';
+     5→import { ArrowRight, BarChart3, Bot, Zap, Target, Search, Users, Sparkles, ChevronRight } from 'lucide-react';
+     6→import { useAppStore } from '@/store/use-app-store';
+     7→
+     8→/* ============================================================
+     9→   Animation Variants
+    10→   ============================================================ */
+    11→
+    12→const fadeUp = {
+    13→  hidden: { opacity: 0, y: 30 },
+    14→  visible: { opacity: 1, y: 0 },
+    15→};
+    16→
+    17→const staggerContainer = {
+    18→  hidden: { opacity: 0 },
+    19→  visible: {
+    20→    opacity: 1,
+    21→    transition: { staggerChildren: 0.12, delayChildren: 0.2 },
+    22→  },
+    23→};
+    24→
+    25→const scaleIn = {
+    26→  hidden: { opacity: 0, scale: 0.9 },
+    27→  visible: { opacity: 1, scale: 1 },
+    28→};
+    29→
+    30→/* ============================================================
+    31→   Counter Hook
+    32→   ============================================================ */
+    33→
+    34→function useCounter(end: number, duration = 2000, startOnView = true) {
+    35→  const [count, setCount] = useState(0);
+    36→  const [started, setStarted] = useState(!startOnView);
+    37→  const ref = useRef<HTMLDivElement>(null);
+    38→
+    39→  useEffect(() => {
+    40→    if (!startOnView) return;
+    41→    const el = ref.current;
+    42→    if (!el) return;
+    43→    const observer = new IntersectionObserver(
+    44→      ([entry]) => {
+    45→        if (entry.isIntersecting) {
+    46→          setStarted(true);
+    47→          observer.disconnect();
+    48→        }
+    49→      },
+    50→      { threshold: 0.3 }
+    51→    );
+    52→    observer.observe(el);
+    53→    return () => observer.disconnect();
+    54→  }, [startOnView]);
+    55→
+    56→  useEffect(() => {
+    57→    if (!started) return;
+    58→    let startTime: number | null = null;
+    59→    let raf: number;
+    60→    const step = (timestamp: number) => {
+    61→      if (!startTime) startTime = timestamp;
+    62→      const progress = Math.min((timestamp - startTime) / duration, 1);
+    63→      const eased = 1 - Math.pow(1 - progress, 3);
+    64→      setCount(Math.floor(eased * end));
+    65→      if (progress < 1) raf = requestAnimationFrame(step);
+    66→    };
+    67→    raf = requestAnimationFrame(step);
+    68→    return () => cancelAnimationFrame(raf);
+    69→  }, [started, end, duration]);
+    70→
+    71→  return { count, ref };
+    72→}
+    73→
+    74→/* ============================================================
+    75→   Landing Page Component
+    76→   ============================================================ */
+    77→
+    78→export default function LandingPage() {
+    79→  /* ---------- Custom Cursor ---------- */
+    80→  const cursorRef = useRef<HTMLDivElement>(null);
+    81→  const cursorPos = useRef({ x: -100, y: -100 });
+    82→  const cursorTarget = useRef({ x: -100, y: -100 });
+    83→
+    84→  const animateCursor = useCallback(() => {
+    85→    cursorPos.current.x += (cursorTarget.current.x - cursorPos.current.x) * 0.15;
+    86→    cursorPos.current.y += (cursorTarget.current.y - cursorPos.current.y) * 0.15;
+    87→    if (cursorRef.current) {
+    88→      cursorRef.current.style.left = `${cursorPos.current.x}px`;
+    89→      cursorRef.current.style.top = `${cursorPos.current.y}px`;
+    90→    }
+    91→    requestAnimationFrame(animateCursor);
+    92→  }, []);
+    93→
+    94→  useEffect(() => {
+    95→    const handleMouseMove = (e: MouseEvent) => {
+    96→      cursorTarget.current.x = e.clientX;
+    97→      cursorTarget.current.y = e.clientY;
+    98→    };
+    99→    window.addEventListener('mousemove', handleMouseMove);
+   100→    requestAnimationFrame(animateCursor);
+   101→    return () => window.removeEventListener('mousemove', handleMouseMove);
+   102→  }, [animateCursor]);
+   103→
+   104→  /* ---------- CTA Handler ---------- */
+   105→  const handleGetStarted = () => {
+   106→    useAppStore.getState().setView('onboarding');
+   107→  };
+   108→
+   109→  /* ---------- CTA Glow Effect ---------- */
+   110→  const ctaRef = useRef<HTMLDivElement>(null);
+   111→  const handleCTAMouseMove = (e: React.MouseEvent) => {
+   112→    if (ctaRef.current) {
+   113→      const rect = ctaRef.current.getBoundingClientRect();
+   114→      ctaRef.current.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+   115→      ctaRef.current.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+   116→    }
+   117→  };
+   118→
+   119→  /* ---------- Counters ---------- */
+   120→  const c1 = useCounter(500, 2000);
+   121→  const c2 = useCounter(2, 1500);
+   122→  const c3 = useCounter(4.2, 2200);
+   123→  const c4 = useCounter(98, 1800);
+   124→
+   125→  /* ---------- Nav hover state for cursor ---------- */
+   126→  const handleHoverStart = () => cursorRef.current?.classList.add('hovering');
+   127→  const handleHoverEnd = () => cursorRef.current?.classList.remove('hovering');
+   128→
+   129→  /* ============================================================
+   130→     Render
+   131→     ============================================================ */
+   132→
+   133→  return (
+   134→    <div className="relative min-h-screen bg-white overflow-hidden font-[Plus_Jakarta_Sans]">
+   135→      {/* ============ 1. Custom Cursor ============ */}
+   136→      <div id="custom-cursor" ref={cursorRef} />
+   137→
+   138→      {/* ============ 2. Navigation ============ */}
+   139→      <motion.nav
+   140→        initial={{ y: -100 }}
+   141→        animate={{ y: 0 }}
+   142→        transition={{ duration: 0.8, ease: 'easeOut' }}
+   143→        className="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl z-50"
+   144→      >
+   145→        <div className="bg-white/40 backdrop-blur-xl border border-white/60 shadow-lg rounded-full px-6 py-3 flex items-center justify-between">
+   146→          {/* Logo */}
+   147→          <div className="flex items-center gap-2">
+   148→            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF5E3A] to-[#C084FC] flex items-center justify-center">
+   149→              <span className="text-white font-extrabold text-sm">H</span>
+   150→            </div>
+   151→            <span className="font-bold text-lg gradient-text">MarketMind</span>
+   152→          </div>
+   153→
+   154→          {/* Nav Links - hidden on mobile */}
+   155→          <div className="hidden md:flex items-center gap-8">
+   156→            {['Product', 'Features', 'Pricing'].map((link) => (
+   157→              <a
+   158→                key={link}
+   159→                href={`#${link.toLowerCase()}`}
+   160→                className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors relative group"
+   161→                onMouseEnter={handleHoverStart}
+   162→                onMouseLeave={handleHoverEnd}
+   163→              >
+   164→                {link}
+   165→                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] group-hover:w-full transition-all duration-300" />
+   166→              </a>
+   167→            ))}
+   168→          </div>
+   169→
+   170→          {/* CTA Button */}
+   171→          <motion.button
+   172→            whileHover={{ scale: 1.05 }}
+   173→            whileTap={{ scale: 0.95 }}
+   174→            onClick={handleGetStarted}
+   175→            onMouseEnter={handleHoverStart}
+   176→            onMouseLeave={handleHoverEnd}
+   177→            className="px-5 py-2 bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] text-white text-sm font-semibold rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300"
+   178→          >
+   179→            Get Started
+   180→          </motion.button>
+   181→        </div>
+   182→      </motion.nav>
+   183→
+   184→      {/* ============ 3. Hero Section ============ */}
+   185→      <section className="relative min-h-screen flex items-center justify-center pt-24 pb-16 px-4">
+   186→        {/* Background gradient */}
+   187→        <div className="absolute inset-0 bg-gradient-to-b from-[#FF5E3A]/10 via-[#C084FC]/5 to-transparent pointer-events-none" />
+   188→
+   189→        {/* Floating 3D orbs */}
+   190→        <div className="absolute top-20 left-[10%] w-72 h-72 bg-[#FF5E3A]/20 rounded-full blur-3xl animate-float pointer-events-none" />
+   191→        <div className="absolute top-40 right-[15%] w-96 h-96 bg-[#C084FC]/15 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '2s' }} />
+   192→        <div className="absolute bottom-20 left-[30%] w-80 h-80 bg-[#38BDF8]/15 rounded-full blur-3xl animate-float pointer-events-none" style={{ animationDelay: '4s' }} />
+   193→
+   194→        {/* Content */}
+   195→        <motion.div
+   196→          variants={staggerContainer}
+   197→          initial="hidden"
+   198→          animate="visible"
+   199→          className="relative z-10 max-w-5xl mx-auto text-center"
+   200→        >
+   201→          {/* Badge Pill */}
+   202→          <motion.div
+   203→            variants={fadeUp}
+   204→            transition={{ duration: 0.6 }}
+   205→            className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-8"
+   206→          >
+   207→            <span className="flex items-center gap-1.5 text-xs font-semibold bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] bg-clip-text text-transparent">
+   208→              <Sparkles className="w-3.5 h-3.5 text-[#FF5E3A]" />
+   209→              AI-Powered
+   210→            </span>
+   211→            <span className="text-xs text-gray-500">Marketing OS</span>
+   212→          </motion.div>
+   213→
+   214→          {/* Main Heading */}
+   215→          <motion.h1
+   216→            variants={fadeUp}
+   217→            transition={{ duration: 0.7 }}
+   218→            className="text-5xl md:text-7xl font-extrabold leading-tight tracking-tight text-gray-900 mb-6"
+   219→          >
+   220→            Your AI Marketing{'\n'}
+   221→            <span className="gradient-text">Employee</span>
+   222→          </motion.h1>
+   223→
+   224→          {/* Subheading */}
+   225→          <motion.p
+   226→            variants={fadeUp}
+   227→            transition={{ duration: 0.7 }}
+   228→            className="text-lg md:text-xl text-gray-500 max-w-2xl mx-auto mb-10 leading-relaxed"
+   229→          >
+   230→            An intelligent marketing operating system that plans campaigns, generates leads, optimizes SEO, and manages ads across all platforms — so you can focus on growing your business.
+   231→          </motion.p>
+   232→
+   233→          {/* Chat Input Mockup */}
+   234→          <motion.div
+   235→            variants={scaleIn}
+   236→            transition={{ duration: 0.7 }}
+   237→            className="glass-strong rounded-2xl p-1 max-w-2xl mx-auto mb-8 shadow-xl"
+   238→          >
+   239→            <div className="flex items-center gap-3 p-4">
+   240→              <div className="flex-1 text-left">
+   241→                <textarea
+   242→                  readOnly
+   243→                  placeholder="Ask AI to create a campaign, analyze leads, or optimize your ads..."
+   244→                  rows={2}
+   245→                  className="w-full bg-transparent text-sm text-gray-600 placeholder:text-gray-400 resize-none focus:outline-none"
+   246→                />
+   247→              </div>
+   248→              <motion.button
+   249→                whileHover={{ scale: 1.1 }}
+   250→                whileTap={{ scale: 0.9 }}
+   251→                onMouseEnter={handleHoverStart}
+   252→                onMouseLeave={handleHoverEnd}
+   253→                className="flex-shrink-0 w-10 h-10 rounded-xl bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] flex items-center justify-center text-white shadow-lg"
+   254→              >
+   255→                <ArrowRight className="w-5 h-5" />
+   256→              </motion.button>
+   257→            </div>
+   258→            <div className="flex items-center gap-2 px-4 pb-3">
+   259→              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FF5E3A]/10 text-[#FF5E3A] text-xs font-medium">
+   260→                <Zap className="w-3 h-3" />
+   261→                Plan
+   262→              </div>
+   263→              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#C084FC]/10 text-[#C084FC] text-xs font-medium">
+   264→                <Bot className="w-3 h-3" />
+   265→                Execute
+   266→              </div>
+   267→              <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#38BDF8]/10 text-[#38BDF8] text-xs font-medium">
+   268→                <BarChart3 className="w-3 h-3" />
+   269→                Analyze
+   270→              </div>
+   271→            </div>
+   272→          </motion.div>
+   273→
+   274→          {/* Quick Action Pills */}
+   275→          <motion.div
+   276→            variants={fadeUp}
+   277→            transition={{ duration: 0.6 }}
+   278→            className="flex flex-wrap justify-center gap-3"
+   279→          >
+   280→            {[
+   281→              { label: 'Analytics Dashboard', icon: BarChart3, color: '#FF5E3A' },
+   282→              { label: 'Lead Generation', icon: Users, color: '#C084FC' },
+   283→              { label: 'SEO Optimization', icon: Search, color: '#38BDF8' },
+   284→              { label: 'Ad Campaigns', icon: Target, color: '#FF5E3A' },
+   285→            ].map((item) => (
+   286→              <motion.button
+   287→                key={item.label}
+   288→                whileHover={{ scale: 1.05, y: -2 }}
+   289→                whileTap={{ scale: 0.95 }}
+   290→                onMouseEnter={handleHoverStart}
+   291→                onMouseLeave={handleHoverEnd}
+   292→                className="flex items-center gap-2 px-4 py-2 rounded-full glass text-sm font-medium text-gray-700 hover:shadow-md transition-shadow duration-300"
+   293→              >
+   294→                <item.icon className="w-4 h-4" style={{ color: item.color }} />
+   295→                {item.label}
+   296→                <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
+   297→              </motion.button>
+   298→            ))}
+   299→          </motion.div>
+   300→        </motion.div>
+   301→      </section>
+   302→
+   303→      {/* ============ 4. Features Section ============ */}
+   304→      <section id="features" className="relative py-24 px-4">
+   305→        <div className="max-w-7xl mx-auto">
+   306→          <motion.div
+   307→            initial="hidden"
+   308→            whileInView="visible"
+   309→            viewport={{ once: true, margin: '-100px' }}
+   310→            variants={staggerContainer}
+   311→            className="text-center mb-16"
+   312→          >
+   313→            <motion.span
+   314→              variants={fadeUp}
+   315→              className="inline-block text-sm font-semibold text-[#FF5E3A] uppercase tracking-wider mb-4"
+   316→            >
+   317→              Features
+   318→            </motion.span>
+   319→            <motion.h2
+   320→              variants={fadeUp}
+   321→              className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4"
+   322→            >
+   323→              Everything you need to{'\n'}
+   324→              <span className="gradient-text">dominate marketing</span>
+   325→            </motion.h2>
+   326→            <motion.p variants={fadeUp} className="text-gray-500 max-w-xl mx-auto text-lg">
+   327→              Powerful AI tools that handle the complexity of modern marketing so you can focus on strategy and creativity.
+   328→            </motion.p>
+   329→          </motion.div>
+   330→
+   331→          <motion.div
+   332→            initial="hidden"
+   333→            whileInView="visible"
+   334→            viewport={{ once: true, margin: '-50px' }}
+   335→            variants={staggerContainer}
+   336→            className="grid md:grid-cols-3 gap-6"
+   337→          >
+   338→            {/* Card 1: AI-Powered Analysis */}
+   339→            <motion.div
+   340→              variants={fadeUp}
+   341→              transition={{ duration: 0.6 }}
+   342→              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+   343→              onMouseEnter={handleHoverStart}
+   344→              onMouseLeave={handleHoverEnd}
+   345→              className="glass-strong rounded-3xl p-8 group cursor-pointer"
+   346→            >
+   347→              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#FF5E3A]/20 to-[#FF5E3A]/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+   348→                <BarChart3 className="w-7 h-7 text-[#FF5E3A]" />
+   349→              </div>
+   350→              <h3 className="text-xl font-bold text-gray-900 mb-3">AI-Powered Analysis</h3>
+   351→              <p className="text-gray-500 leading-relaxed">
+   352→                Deep analytics powered by machine learning. Get actionable insights on campaign performance, audience behavior, and market trends in real time.
+   353→              </p>
+   354→            </motion.div>
+   355→
+   356→            {/* Card 2: Multi-Platform Ads */}
+   357→            <motion.div
+   358→              variants={fadeUp}
+   359→              transition={{ duration: 0.6 }}
+   360→              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+   361→              onMouseEnter={handleHoverStart}
+   362→              onMouseLeave={handleHoverEnd}
+   363→              className="glass-strong rounded-3xl p-8 group cursor-pointer"
+   364→            >
+   365→              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#C084FC]/20 to-[#C084FC]/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+   366→                <Target className="w-7 h-7 text-[#C084FC]" />
+   367→              </div>
+   368→              <h3 className="text-xl font-bold text-gray-900 mb-3">Multi-Platform Ads</h3>
+   369→              <p className="text-gray-500 leading-relaxed">
+   370→                Create, manage, and optimize ad campaigns across Google, Meta, LinkedIn, and more — all from a single unified dashboard.
+   371→              </p>
+   372→            </motion.div>
+   373→
+   374→            {/* Card 3: Smart Lead Management */}
+   375→            <motion.div
+   376→              variants={fadeUp}
+   377→              transition={{ duration: 0.6 }}
+   378→              whileHover={{ y: -8, transition: { duration: 0.3 } }}
+   379→              onMouseEnter={handleHoverStart}
+   380→              onMouseLeave={handleHoverEnd}
+   381→              className="glass-strong rounded-3xl p-8 group cursor-pointer"
+   382→            >
+   383→              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#38BDF8]/20 to-[#38BDF8]/5 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+   384→                <Users className="w-7 h-7 text-[#38BDF8]" />
+   385→              </div>
+   386→              <h3 className="text-xl font-bold text-gray-900 mb-3">Smart Lead Management</h3>
+   387→              <p className="text-gray-500 leading-relaxed">
+   388→                AI-driven lead scoring, nurturing workflows, and conversion optimization. Turn prospects into loyal customers automatically.
+   389→              </p>
+   390→            </motion.div>
+   391→          </motion.div>
+   392→        </div>
+   393→      </section>
+   394→
+   395→      {/* ============ 5. How It Works ============ */}
+   396→      <section className="relative py-24 px-4">
+   397→        <div className="max-w-7xl mx-auto">
+   398→          <motion.div
+   399→            initial="hidden"
+   400→            whileInView="visible"
+   401→            viewport={{ once: true, margin: '-100px' }}
+   402→            variants={staggerContainer}
+   403→            className="text-center mb-16"
+   404→          >
+   405→            <motion.span variants={fadeUp} className="inline-block text-sm font-semibold text-[#C084FC] uppercase tracking-wider mb-4">
+   406→              How It Works
+   407→            </motion.span>
+   408→            <motion.h2 variants={fadeUp} className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
+   409→              Three steps to{'\n'}
+   410→              <span className="gradient-text">marketing excellence</span>
+   411→            </motion.h2>
+   412→          </motion.div>
+   413→
+   414→          <motion.div
+   415→            initial="hidden"
+   416→            whileInView="visible"
+   417→            viewport={{ once: true, margin: '-50px' }}
+   418→            variants={staggerContainer}
+   419→            className="grid md:grid-cols-3 gap-8"
+   420→          >
+   421→            {[
+   422→              {
+   423→                step: '01',
+   424→                icon: Bot,
+   425→                title: 'Connect Your Data',
+   426→                desc: 'Link your existing marketing platforms, CRM, and analytics tools. Our AI ingests your data securely in minutes.',
+   427→                color: '#FF5E3A',
+   428→              },
+   429→              {
+   430→                step: '02',
+   431→                icon: Sparkles,
+   432→                title: 'AI Creates Strategy',
+   433→                desc: 'Our AI analyzes your market, competitors, and audience to generate a custom marketing strategy tailored to your goals.',
+   434→                color: '#C084FC',
+   435→              },
+   436→              {
+   437→                step: '03',
+   438→                icon: Zap,
+   439→                title: 'Execute & Optimize',
+   440→                desc: 'Deploy campaigns, track performance, and let AI continuously optimize every aspect of your marketing for maximum ROI.',
+   441→                color: '#38BDF8',
+   442→              },
+   443→            ].map((item) => (
+   444→              <motion.div
+   445→                key={item.step}
+   446→                variants={fadeUp}
+   447→                transition={{ duration: 0.6 }}
+   448→                className="flex flex-col items-center text-center md:text-left md:items-start"
+   449→              >
+   450→                <div className="flex items-start gap-5">
+   451→                  <div className="flex-shrink-0">
+   452→                    <div
+   453→                      className="w-16 h-16 rounded-2xl flex items-center justify-center mb-3"
+   454→                      style={{ backgroundColor: `${item.color}15` }}
+   455→                    >
+   456→                      <item.icon className="w-8 h-8" style={{ color: item.color }} />
+   457→                    </div>
+   458→                  </div>
+   459→                  <div>
+   460→                    <span className="text-xs font-bold tracking-widest text-gray-300 mb-1 block">STEP {item.step}</span>
+   461→                    <h3 className="text-xl font-bold text-gray-900 mb-2">{item.title}</h3>
+   462→                    <p className="text-gray-500 leading-relaxed">{item.desc}</p>
+   463→                  </div>
+   464→                </div>
+   465→              </motion.div>
+   466→            ))}
+   467→          </motion.div>
+   468→        </div>
+   469→      </section>
+   470→
+   471→      {/* ============ 6. Stats Section ============ */}
+   472→      <section className="relative py-24 px-4">
+   473→        <div className="max-w-7xl mx-auto">
+   474→          <motion.div
+   475→            initial="hidden"
+   476→            whileInView="visible"
+   477→            viewport={{ once: true, margin: '-50px' }}
+   478→            variants={staggerContainer}
+   479→            className="glass-strong rounded-3xl p-8 md:p-12"
+   480→          >
+   481→            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
+   482→              <div ref={c1.ref} className="text-center">
+   483→                <div className="text-3xl md:text-5xl font-extrabold gradient-text mb-2">
+   484→                  {c1.count}+
+   485→                </div>
+   486→                <p className="text-sm text-gray-500 font-medium">Campaigns Launched</p>
+   487→              </div>
+   488→              <div ref={c2.ref} className="text-center">
+   489→                <div className="text-3xl md:text-5xl font-extrabold gradient-text mb-2">
+   490→                  {c2.count}M+
+   491→                </div>
+   492→                <p className="text-sm text-gray-500 font-medium">Leads Generated</p>
+   493→              </div>
+   494→              <div ref={c3.ref} className="text-center">
+   495→                <div className="text-3xl md:text-5xl font-extrabold gradient-text mb-2">
+   496→                  {c3.count.toFixed(1)}x
+   497→                </div>
+   498→                <p className="text-sm text-gray-500 font-medium">Avg ROAS</p>
+   499→              </div>
+   500→              <div ref={c4.ref} className="text-center">
+   501→                <div className="text-3xl md:text-5xl font-extrabold gradient-text mb-2">
+   502→                  {c4.count}%
+   503→                </div>
+   504→                <p className="text-sm text-gray-500 font-medium">Satisfaction</p>
+   505→              </div>
+   506→            </div>
+   507→          </motion.div>
+   508→        </div>
+   509→      </section>
+   510→
+   511→      {/* ============ 7. Pricing Section ============ */}
+   512→      <section id="pricing" className="relative py-24 px-4">
+   513→        <div className="max-w-7xl mx-auto">
+   514→          <motion.div
+   515→            initial="hidden"
+   516→            whileInView="visible"
+   517→            viewport={{ once: true, margin: '-100px' }}
+   518→            variants={staggerContainer}
+   519→            className="text-center mb-16"
+   520→          >
+   521→            <motion.span variants={fadeUp} className="inline-block text-sm font-semibold text-[#38BDF8] uppercase tracking-wider mb-4">
+   522→              Pricing
+   523→            </motion.span>
+   524→            <motion.h2 variants={fadeUp} className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4">
+   525→              Simple, transparent{'\n'}
+   526→              <span className="gradient-text">pricing</span>
+   527→            </motion.h2>
+   528→            <motion.p variants={fadeUp} className="text-gray-500 max-w-xl mx-auto text-lg">
+   529→              Start free, upgrade when you&apos;re ready. No hidden fees.
+   530→            </motion.p>
+   531→          </motion.div>
+   532→
+   533→          <motion.div
+   534→            initial="hidden"
+   535→            whileInView="visible"
+   536→            viewport={{ once: true, margin: '-50px' }}
+   537→            variants={staggerContainer}
+   538→            className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto"
+   539→          >
+   540→            {/* Starter */}
+   541→            <motion.div
+   542→              variants={fadeUp}
+   543→              transition={{ duration: 0.6 }}
+   544→              whileHover={{ y: -6, transition: { duration: 0.3 } }}
+   545→              className="glass-strong rounded-3xl p-8 flex flex-col"
+   546→            >
+   547→              <h3 className="text-lg font-bold text-gray-900 mb-1">Starter</h3>
+   548→              <p className="text-sm text-gray-500 mb-6">Perfect for exploring AI marketing</p>
+   549→              <div className="mb-6">
+   550→                <span className="text-4xl font-extrabold text-gray-900">Free</span>
+   551→              </div>
+   552→              <ul className="space-y-3 mb-8 flex-1">
+   553→                {[
+   554→                  '3 Active Campaigns',
+   555→                  'Basic AI Insights',
+   556→                  '1 Platform Integration',
+   557→                  'Community Support',
+   558→                ].map((f) => (
+   559→                  <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+   560→                    <div className="w-5 h-5 rounded-full bg-[#38BDF8]/15 flex items-center justify-center flex-shrink-0">
+   561→                      <svg className="w-3 h-3 text-[#38BDF8]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+   562→                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+   563→                      </svg>
+   564→                    </div>
+   565→                    {f}
+   566→                  </li>
+   567→                ))}
+   568→              </ul>
+   569→              <motion.button
+   570→                whileHover={{ scale: 1.03 }}
+   571→                whileTap={{ scale: 0.97 }}
+   572→                onMouseEnter={handleHoverStart}
+   573→                onMouseLeave={handleHoverEnd}
+   574→                onClick={handleGetStarted}
+   575→                className="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold text-sm hover:border-[#FF5E3A] hover:text-[#FF5E3A] transition-colors duration-300"
+   576→              >
+   577→                Get Started Free
+   578→              </motion.button>
+   579→            </motion.div>
+   580→
+   581→            {/* Professional */}
+   582→            <motion.div
+   583→              variants={fadeUp}
+   584→              transition={{ duration: 0.6 }}
+   585→              whileHover={{ y: -6, transition: { duration: 0.3 } }}
+   586→              className="relative glass-strong rounded-3xl p-8 flex flex-col gradient-border"
+   587→            >
+   588→              <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] text-white text-xs font-bold rounded-full">
+   589→                Most Popular
+   590→              </div>
+   591→              <h3 className="text-lg font-bold text-gray-900 mb-1">Professional</h3>
+   592→              <p className="text-sm text-gray-500 mb-6">For growing businesses & teams</p>
+   593→              <div className="mb-6">
+   594→                <span className="text-4xl font-extrabold text-gray-900">₹4,999</span>
+   595→                <span className="text-gray-400 text-sm">/mo</span>
+   596→              </div>
+   597→              <ul className="space-y-3 mb-8 flex-1">
+   598→                {[
+   599→                  'Unlimited Campaigns',
+   600→                  'Advanced AI Analytics',
+   601→                  '10 Platform Integrations',
+   602→                  'Priority Support',
+   603→                  'Custom Branding',
+   604→                  'API Access',
+   605→                ].map((f) => (
+   606→                  <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+   607→                    <div className="w-5 h-5 rounded-full bg-[#FF5E3A]/15 flex items-center justify-center flex-shrink-0">
+   608→                      <svg className="w-3 h-3 text-[#FF5E3A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+   609→                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+   610→                      </svg>
+   611→                    </div>
+   612→                    {f}
+   613→                  </li>
+   614→                ))}
+   615→              </ul>
+   616→              <motion.button
+   617→                whileHover={{ scale: 1.03 }}
+   618→                whileTap={{ scale: 0.97 }}
+   619→                onMouseEnter={handleHoverStart}
+   620→                onMouseLeave={handleHoverEnd}
+   621→                onClick={handleGetStarted}
+   622→                className="w-full py-3 rounded-xl bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] text-white font-semibold text-sm shadow-lg hover:shadow-xl transition-shadow duration-300"
+   623→              >
+   624→                Start Professional Plan
+   625→              </motion.button>
+   626→            </motion.div>
+   627→
+   628→            {/* Enterprise */}
+   629→            <motion.div
+   630→              variants={fadeUp}
+   631→              transition={{ duration: 0.6 }}
+   632→              whileHover={{ y: -6, transition: { duration: 0.3 } }}
+   633→              className="glass-strong rounded-3xl p-8 flex flex-col"
+   634→            >
+   635→              <h3 className="text-lg font-bold text-gray-900 mb-1">Enterprise</h3>
+   636→              <p className="text-sm text-gray-500 mb-6">For large-scale operations</p>
+   637→              <div className="mb-6">
+   638→                <span className="text-4xl font-extrabold text-gray-900">Custom</span>
+   639→              </div>
+   640→              <ul className="space-y-3 mb-8 flex-1">
+   641→                {[
+   642→                  'Everything in Professional',
+   643→                  'Dedicated AI Agent',
+   644→                  'Unlimited Integrations',
+   645→                  'Dedicated Account Manager',
+   646→                  'SLA & Uptime Guarantee',
+   647→                  'On-premise Deployment',
+   648→                ].map((f) => (
+   649→                  <li key={f} className="flex items-center gap-2 text-sm text-gray-600">
+   650→                    <div className="w-5 h-5 rounded-full bg-[#C084FC]/15 flex items-center justify-center flex-shrink-0">
+   651→                      <svg className="w-3 h-3 text-[#C084FC]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+   652→                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+   653→                      </svg>
+   654→                    </div>
+   655→                    {f}
+   656→                  </li>
+   657→                ))}
+   658→              </ul>
+   659→              <motion.button
+   660→                whileHover={{ scale: 1.03 }}
+   661→                whileTap={{ scale: 0.97 }}
+   662→                onMouseEnter={handleHoverStart}
+   663→                onMouseLeave={handleHoverEnd}
+   664→                onClick={handleGetStarted}
+   665→                className="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold text-sm hover:border-[#C084FC] hover:text-[#C084FC] transition-colors duration-300"
+   666→              >
+   667→                Contact Sales
+   668→              </motion.button>
+   669→            </motion.div>
+   670→          </motion.div>
+   671→        </div>
+   672→      </section>
+   673→
+   674→      {/* ============ 8. Final CTA Section ============ */}
+   675→      <section className="relative py-24 px-4">
+   676→        <div
+   677→          ref={ctaRef}
+   678→          onMouseMove={handleCTAMouseMove}
+   679→          className="relative max-w-5xl mx-auto glass-strong rounded-3xl p-12 md:p-20 overflow-hidden text-center"
+   680→          style={{
+   681→            background:
+   682→              'radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255,94,58,0.08), rgba(192,132,252,0.05), transparent 40%), rgba(255,255,255,0.6)',
+   683→            backdropFilter: 'blur(40px)',
+   684→          }}
+   685→        >
+   686→          <motion.div
+   687→            initial="hidden"
+   688→            whileInView="visible"
+   689→            viewport={{ once: true }}
+   690→            variants={staggerContainer}
+   691→          >
+   692→            <motion.h2
+   693→              variants={fadeUp}
+   694→              className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6"
+   695→            >
+   696→              Ready to Transform{'\n'}
+   697→              <span className="gradient-text">Your Marketing?</span>
+   698→            </motion.h2>
+   699→            <motion.p variants={fadeUp} className="text-gray-500 text-lg max-w-xl mx-auto mb-10">
+   700→              Join thousands of businesses already using MarketMind to automate their marketing and achieve extraordinary results.
+   701→            </motion.p>
+   702→            <motion.div variants={fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+   703→              <motion.button
+   704→                whileHover={{ scale: 1.05 }}
+   705→                whileTap={{ scale: 0.95 }}
+   706→                onMouseEnter={handleHoverStart}
+   707→                onMouseLeave={handleHoverEnd}
+   708→                onClick={handleGetStarted}
+   709→                className="px-8 py-4 bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] text-white font-bold rounded-full shadow-xl hover:shadow-2xl transition-shadow duration-300 flex items-center gap-2 text-lg"
+   710→              >
+   711→                Get Started Now
+   712→                <ArrowRight className="w-5 h-5" />
+   713→              </motion.button>
+   714→              <motion.button
+   715→                whileHover={{ scale: 1.05 }}
+   716→                whileTap={{ scale: 0.95 }}
+   717→                onMouseEnter={handleHoverStart}
+   718→                onMouseLeave={handleHoverEnd}
+   719→                className="px-8 py-4 rounded-full border-2 border-gray-200 text-gray-700 font-semibold hover:border-[#C084FC] hover:text-[#C084FC] transition-colors duration-300"
+   720→              >
+   721→                Watch Demo
+   722→              </motion.button>
+   723→            </motion.div>
+   724→          </motion.div>
+   725→        </div>
+   726→      </section>
+   727→
+   728→      {/* ============ 9. Footer ============ */}
+   729→      <footer className="relative py-12 px-4 border-t border-gray-100">
+   730→        <div className="max-w-7xl mx-auto">
+   731→          <div className=

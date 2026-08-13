@@ -1,0 +1,660 @@
+     1→<!DOCTYPE html><html class="light" lang="en" style=""><head>
+     2→<meta charset="utf-8">
+     3→<meta content="width=device-width, initial-scale=1.0" name="viewport">
+     4→<title>Horizon - Build Limitless Apps</title>
+     5→<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+     6→<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+     7→<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+     8→<style>
+     9→        .material-symbols-outlined {
+    10→            font-family: 'Material Symbols Outlined';
+    11→            font-weight: normal;
+    12→            font-style: normal;
+    13→            font-size: 24px;
+    14→            line-height: 1;
+    15→            letter-spacing: normal;
+    16→            text-transform: none;
+    17→            display: inline-block;
+    18→            white-space: nowrap;
+    19→            word-wrap: normal;
+    20→            direction: ltr;
+    21→            -webkit-font-feature-settings: 'liga';
+    22→            -webkit-font-smoothing: antialiased;
+    23→        }
+    24→        
+    25→        @keyframes gradient-shift {
+    26→            0% { background-position: 0% 50%; }
+    27→            50% { background-position: 100% 50%; }
+    28→            100% { background-position: 0% 50%; }
+    29→        }
+    30→        .animate-gradient {
+    31→            background-size: 200% 200%;
+    32→            animation: gradient-shift 15s ease infinite;
+    33→        }
+    34→    
+    35→        #custom-cursor {
+    36→            width: 16px;
+    37→            height: 16px;
+    38→            background-color: white;
+    39→            border-radius: 50%;
+    40→            position: fixed;
+    41→            top: 0;
+    42→            left: 0;
+    43→            pointer-events: none;
+    44→            z-index: 9999;
+    45→            mix-blend-mode: difference;
+    46→            transition: transform 0.1s ease-out;
+    47→            transform: translate(-50%, -50%);
+    48→            display: none;
+    49→        }
+    50→        @media (pointer: coarse) {
+    51→            #custom-cursor { display: none !important; }
+    52→        }
+    53→    </style>
+    54→<script id="tailwind-config">
+    55→  tailwind.config = {
+    56→    darkMode: "class",
+    57→    theme: {
+    58→      extend: {
+    59→        "colors": {
+    60→                "on-tertiary-fixed": "#001f29",
+    61→                "on-tertiary-container": "#074457",
+    62→                "on-secondary-fixed-variant": "#3f4c00",
+    63→                "outline-variant": "#ddc0b8",
+    64→                "surface": "#ffffff",
+    65→                "secondary-container": "#d6ed7a",
+    66→                "inverse-primary": "#ffb59e",
+    67→                "tertiary-container": "#80b1c7",
+    68→                "surface-bright": "#ffffff",
+    69→                "on-surface-variant": "#555555",
+    70→                "tertiary": "#326578",
+    71→                "surface-container-highest": "#e8e2d7",
+    72→                "on-primary-fixed-variant": "#7f2a0d",
+    73→                "on-primary-fixed": "#3a0b00",
+    74→                "primary": "#FF5E3A",
+    75→                "on-surface": "#000000",
+    76→                "on-error-container": "#93000a",
+    77→                "surface-tint": "#9f4122",
+    78→                "surface-container-low": "#f9f3e8",
+    79→                "secondary-fixed": "#d6ed7a",
+    80→                "secondary": "#556500",
+    81→                "on-secondary-fixed": "#181e00",
+    82→                "on-tertiary": "#ffffff",
+    83→                "primary-container": "#ff8a65",
+    84→                "error-container": "#ffdad6",
+    85→                "on-error": "#ffffff",
+    86→                "on-primary-container": "#752305",
+    87→                "tertiary-fixed-dim": "#9ccee4",
+    88→                "on-tertiary-fixed-variant": "#154d5f",
+    89→                "surface-container-lowest": "#ffffff",
+    90→                "background": "#ffffff",
+    91→                "on-secondary-container": "#5a6c00",
+    92→                "surface-container-high": "#ede8dd",
+    93→                "inverse-surface": "#333029",
+    94→                "on-primary": "#ffffff",
+    95→                "tertiary-fixed": "#bbe9ff",
+    96→                "primary-fixed-dim": "#ffb59e",
+    97→                "on-secondary": "#ffffff",
+    98→                "inverse-on-surface": "#f6f0e5",
+    99→                "surface-container": "#f3ede2",
+   100→                "primary-fixed": "#ffdbd0",
+   101→                "on-background": "#000000",
+   102→                "secondary-fixed-dim": "#bbd062",
+   103→                "error": "#ba1a1a",
+   104→                "surface-dim": "#dfd9cf",
+   105→                "surface-variant": "#f4f4f4",
+   106→                "outline": "#89726b"
+   107→        },
+   108→        "borderRadius": {
+   109→                "DEFAULT": "1rem",
+   110→                "lg": "2rem",
+   111→                "xl": "3rem",
+   112→                "full": "9999px"
+   113→        },
+   114→        "spacing": {
+   115→                "unit": "8px",
+   116→                "gutter": "32px",
+   117→                "container-padding": "64px",
+   118→                "section-gap": "120px",
+   119→                "card-internal": "40px"
+   120→        },
+   121→        "fontFamily": {
+   122→                "label-caps": [
+   123→                        "Plus Jakarta Sans"
+   124→                ],
+   125→                "headline-lg": [
+   126→                        "Plus Jakarta Sans"
+   127→                ],
+   128→                "body-lg": [
+   129→                        "Plus Jakarta Sans"
+   130→                ],
+   131→                "headline-md": [
+   132→                        "Plus Jakarta Sans"
+   133→                ],
+   134→                "display-xl": [
+   135→                        "Plus Jakarta Sans"
+   136→                ],
+   137→                "body-md": [
+   138→                        "Plus Jakarta Sans"
+   139→                ]
+   140→        },
+   141→        "fontSize": {
+   142→                "label-caps": [
+   143→                        "12px",
+   144→                        {
+   145→                                "lineHeight": "1",
+   146→                                "letterSpacing": "0.1em",
+   147→                                "fontWeight": "700"
+   148→                        }
+   149→                ],
+   150→                "headline-lg": [
+   151→                        "40px",
+   152→                        {
+   153→                                "lineHeight": "1.2",
+   154→                                "letterSpacing": "-0.02em",
+   155→                                "fontWeight": "700"
+   156→                        }
+   157→                ],
+   158→                "body-lg": [
+   159→                        "18px",
+   160→                        {
+   161→                                "lineHeight": "1.6",
+   162→                                "letterSpacing": "0",
+   163→                                "fontWeight": "400"
+   164→                        }
+   165→                ],
+   166→                "headline-md": [
+   167→                        "24px",
+   168→                        {
+   169→                                "lineHeight": "1.3",
+   170→                                "letterSpacing": "-0.01em",
+   171→                                "fontWeight": "600"
+   172→                        }
+   173→                ],
+   174→                "display-xl": [
+   175→                        "64px",
+   176→                        {
+   177→                                "lineHeight": "1.1",
+   178→                                "letterSpacing": "-0.04em",
+   179→                                "fontWeight": "800"
+   180→                        }
+   181→                ],
+   182→                "body-md": [
+   183→                        "16px",
+   184→                        {
+   185→                                "lineHeight": "1.6",
+   186→                                "letterSpacing": "0",
+   187→                                "fontWeight": "400"
+   188→                        }
+   189→                ]
+   190→        }
+   191→},
+   192→    },
+   193→  }
+   194→</script>
+   195→</head>
+   196→<body class="bg-background text-on-background font-body-md antialiased overflow-x-hidden selection:bg-primary-container selection:text-on-primary-container">
+   197→<!-- Navigation -->
+   198→<nav class="fixed top-6 left-1/2 -translate-x-1/2 w-[95%] max-w-7xl rounded-full border border-white/60 bg-white/40 dark:bg-surface-dim/40 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.05)] z-50 flex justify-between items-center py-3 px-6">
+   199→<a class="font-display-xl text-headline-md tracking-tighter text-primary dark:text-primary-fixed-dim flex items-center gap-2" href="#">
+   200→<svg class="h-8 w-8" fill="none" height="32" viewBox="0 0 32 32" width="32" xmlns="http://www.w3.org/2000/svg">
+   201→<circle cx="16" cy="16" r="15" stroke="black" stroke-width="2"></circle>
+   202→<path d="M11 10V22M21 10V22M11 16H21" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+   203→</svg>
+   204→</a>
+   205→<div class="hidden md:flex items-center gap-6">
+   206→<a class="text-primary font-bold font-body-md text-body-md scale-95 active:scale-90 transition-transform" href="#">Product</a>
+   207→<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 font-body-md text-body-md scale-95 active:scale-90 transition-transform" href="#">Use Cases</a>
+   208→<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 font-body-md text-body-md scale-95 active:scale-90 transition-transform" href="#">Resources</a>
+   209→<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 font-body-md text-body-md scale-95 active:scale-90 transition-transform" href="#">Pricing</a>
+   210→<a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-300 font-body-md text-body-md scale-95 active:scale-90 transition-transform" href="#">Enterprise</a>
+   211→</div>
+   212→<div class="flex items-center gap-4">
+   213→<button class="text-on-surface-variant hover:text-primary transition-colors duration-300 scale-95 active:scale-90 transition-transform flex items-center justify-center">
+   214→<span class="material-symbols-outlined">language</span>
+   215→</button>
+   216→<a class="bg-white/40 text-on-surface border border-white/60 shadow-sm backdrop-blur-md font-body-md text-body-md font-medium px-6 py-2 rounded-full hover:bg-white/60 transition-colors duration-300 scale-95 active:scale-90 transition-transform" href="#">
+   217→                Start Building
+   218→            </a>
+   219→</div>
+   220→</nav>
+   221→<main class="max-w-[1728px] mx-auto w-full">
+   222→<!-- Section 1: Hero -->
+   223→<section class="relative pt-48 pb-section-gap px-container-padding min-h-[90vh] flex flex-col items-center justify-center text-center overflow-hidden">
+   224→<div class="absolute inset-0 bg-gradient-to-b from-[#38BDF8]/20 via-[#C084FC]/10 to-background -z-10"></div>
+   225→<div class="inline-flex items-center gap-2 bg-white/40 backdrop-blur-xl border border-white/60 rounded-full px-4 py-2 mb-8 shadow-sm">
+   226→<span class="bg-secondary-container text-on-secondary-container font-label-caps text-label-caps px-2 py-1 rounded-full uppercase">NEW</span>
+   227→<span class="font-body-md text-body-md text-on-surface">Lorem ipsum dolor</span>
+   228→</div>
+   229→<h1 class="font-display-xl text-[64px] leading-[1.1] tracking-tighter text-on-surface max-w-4xl mb-6">
+   230→                Build with Horizon
+   231→            </h1>
+   232→<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-12">
+   233→                Horizon turns simple prompts into working apps, dashboards, portals, and internal tools — complete with pages, data, auth, and workflows.
+   234→            </p>
+   235→<div class="w-full max-w-[870px] bg-white/40 rounded-3xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] p-6 mb-8 backdrop-blur-xl">
+   236→<div class="flex flex-col gap-4">
+   237→<textarea class="w-full bg-transparent border-none resize-none font-body-lg text-body-lg text-on-surface placeholder:text-outline focus:ring-0 min-h-[80px]" placeholder="Describe the application you want to build..."></textarea>
+   238→<div class="flex items-center justify-between pt-4 border-t border-white/40">
+   239→<div class="flex items-center gap-3">
+   240→<button class="p-2 rounded-full hover:bg-white/50 transition-colors text-on-surface-variant">
+   241→<span class="material-symbols-outlined">add</span>
+   242→</button>
+   243→<div class="flex items-center gap-2 bg-white/50 border border-white/60 rounded-full px-4 py-2 cursor-pointer shadow-sm">
+   244→<span class="font-body-md text-body-md text-on-surface-variant">Plan</span>
+   245→<span class="material-symbols-outlined text-[20px]">toggle_on</span>
+   246→</div>
+   247→</div>
+   248→<button class="bg-white/50 border border-white/60 text-on-surface rounded-full w-12 h-12 flex items-center justify-center shadow-sm hover:bg-white/70 transition-colors scale-95 active:scale-90">
+   249→<span class="material-symbols-outlined">arrow_upward</span>
+   250→</button>
+   251→</div>
+   252→</div>
+   253→</div>
+   254→<div class="flex flex-wrap items-center justify-center gap-3">
+   255→<button class="bg-white/30 text-on-surface border border-white/50 shadow-sm rounded-full px-5 py-2 font-body-md text-body-md hover:bg-white/50 transition-colors backdrop-blur-md">Analytics Dashboard</button>
+   256→<button class="bg-white/30 text-on-surface border border-white/50 shadow-sm rounded-full px-5 py-2 font-body-md text-body-md hover:bg-white/50 transition-colors backdrop-blur-md">Customer Portal</button>
+   257→<button class="bg-white/30 text-on-surface border border-white/50 shadow-sm rounded-full px-5 py-2 font-body-md text-body-md hover:bg-white/50 transition-colors backdrop-blur-md">CRM System</button>
+   258→<button class="bg-white/30 text-on-surface border border-white/50 shadow-sm rounded-full px-5 py-2 font-body-md text-body-md hover:bg-white/50 transition-colors backdrop-blur-md">Team Workspace</button>
+   259→</div>
+   260→</section>
+   261→<!-- Section 2: Minimal Slogan -->
+   262→<section class="py-section-gap px-container-padding bg-surface relative min-h-[810px] flex items-center justify-center">
+   263→<div class="max-w-5xl mx-auto text-center relative z-10">
+   264→<h2 class="font-display-xl text-[62px] leading-[1.2] font-normal text-on-surface tracking-tight">Build beyond the blank page...</h2>
+   265→</div>
+   266→</section>
+   267→<!-- Section 3: Feature 01 -->
+   268→<section class="pt-section-gap pb-0 px-container-padding relative">
+   269→<div class="max-w-[1118px] mx-auto bg-white/40 backdrop-blur-2xl rounded-[10px] border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col md:flex-row min-h-[596px]">
+   270→<div class="p-card-internal flex-1 flex flex-col justify-center">
+   271→<span class="font-label-caps text-label-caps text-on-surface-variant mb-6 tracking-widest">01 / 04</span>
+   272→<h3 class="font-headline-lg text-[32px] text-on-surface mb-6 leading-tight">Infrastructure that<br>appears as you build</h3>
+   273→<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-md">
+   274→                        Transform your ideas into functional applications seamlessly. Our intuitive builder lets you craft complex interfaces and logics without traditional coding constraints.
+   275→                    </p>
+   276→<a class="inline-flex items-center justify-center gap-2 bg-white/40 border border-white/60 shadow-sm backdrop-blur-md text-on-surface font-body-md text-body-md font-medium px-8 py-4 rounded-[8px] w-fit hover:bg-white/60 transition-colors" href="#">
+   277→                        Start building
+   278→                    </a>
+   279→</div>
+   280→<div class="flex-1 bg-white/20 relative overflow-hidden flex items-center justify-end border-l border-white/40">
+   281→<div class="absolute inset-0 bg-gradient-to-br from-primary/10 via-surface-bright/50 to-tertiary/10"></div>
+   282→<div class="absolute inset-0 overflow-hidden opacity-20">
+   283→<div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/20 rounded-full blur-[100px]"></div>
+   284→<div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-tertiary/20 rounded-full blur-[100px]"></div>
+   285→</div>
+   286→<div class="relative z-10 w-[85%] h-[80%] mx-auto bg-white/10 backdrop-blur-[32px] rounded-2xl border border-white/40 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] flex flex-col overflow-hidden">
+   287→<!-- Tabs -->
+   288→<div class="flex items-center justify-center p-4 border-b border-white/10">
+   289→<div class="flex p-1 rounded-full border border-white/20 backdrop-blur-md bg-white/40"><button class="px-4 py-1.5 rounded-full text-[12px] font-bold bg-white text-on-surface shadow-sm">Chat</button><button class="px-4 py-1.5 rounded-full text-[12px] font-semibold text-on-surface hover:text-primary transition-colors">Idea</button><button class="px-4 py-1.5 rounded-full text-[12px] font-semibold text-on-surface hover:text-primary transition-colors">Narration</button></div>
+   290→</div>
+   291→<!-- Content -->
+   292→<div class="flex-1 p-6 space-y-6"><div class="space-y-5">
+   293→<!-- Bot Message -->
+   294→<div class="flex gap-3">
+   295→<div class="w-7 h-7 rounded-full bg-primary/20 shrink-0 border border-white/40 flex items-center justify-center">
+   296→<span class="material-symbols-outlined text-primary text-[14px] font-bold">auto_awesome</span>
+   297→</div>
+   298→<div class="flex-1 space-y-2">
+   299→<div class="h-1.5 w-20 bg-on-surface/40 rounded-full"></div>
+   300→<div class="bg-white/40 rounded-2xl rounded-tl-none p-3 border border-white/60">
+   301→<div class="h-1.5 w-full bg-on-surface/20 rounded-full mb-2"></div>
+   302→<div class="h-1.5 w-2/3 bg-on-surface/20 rounded-full"></div>
+   303→</div>
+   304→</div>
+   305→</div>
+   306→<!-- User Message -->
+   307→<div class="flex gap-3 flex-row-reverse">
+   308→<div class="w-7 h-7 rounded-full bg-tertiary/20 shrink-0 border border-white/40 flex items-center justify-center">
+   309→<span class="material-symbols-outlined text-tertiary text-[14px] font-bold">person</span>
+   310→</div>
+   311→<div class="flex-1 space-y-2 flex flex-col items-end">
+   312→<div class="h-1.5 w-16 bg-on-surface/40 rounded-full"></div>
+   313→<div class="bg-primary/10 rounded-2xl rounded-tr-none p-3 border border-primary/20 w-3/4">
+   314→<div class="h-1.5 w-full bg-primary/40 rounded-full mb-2"></div>
+   315→<div class="h-1.5 w-1/2 bg-primary/40 rounded-full"></div>
+   316→</div>
+   317→</div>
+   318→</div>
+   319→<!-- Components Preview -->
+   320→<div class="grid grid-cols-2 gap-3 pt-2">
+   321→<div class="h-20 bg-white/30 rounded-xl border border-white/40 flex items-center justify-center">
+   322→<span class="material-symbols-outlined text-on-surface-variant/30">dashboard</span>
+   323→</div>
+   324→<div class="h-20 bg-white/30 rounded-xl border border-white/40 flex items-center justify-center">
+   325→<span class="material-symbols-outlined text-on-surface-variant/30">bar_chart</span>
+   326→</div>
+   327→</div>
+   328→<!-- Chat Input Area -->
+   329→<div class="mt-4 p-2 bg-white/40 rounded-full border border-white/60 flex items-center gap-2">
+   330→<span class="material-symbols-outlined text-on-surface-variant text-[20px] ml-2">add_circle</span>
+   331→<div class="flex-1 h-1.5 bg-on-surface/10 rounded-full"></div>
+   332→<div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center shadow-sm">
+   333→<span class="material-symbols-outlined text-white text-[18px]">arrow_upward</span>
+   334→</div>
+   335→</div>
+   336→</div></div>
+   337→</div>
+   338→</div>
+   339→</div>
+   340→</section>
+   341→<!-- Section 4: Feature 02 -->
+   342→<section class="pt-10 pb-section-gap px-container-padding relative">
+   343→<div class="max-w-[1118px] mx-auto bg-white/40 backdrop-blur-2xl rounded-[10px] border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col md:flex-row min-h-[596px]">
+   344→<div class="p-card-internal flex-1 flex flex-col justify-center">
+   345→<span class="font-label-caps text-label-caps text-on-surface-variant mb-6 tracking-widest">02 / 04</span>
+   346→<h3 class="font-headline-lg text-[32px] text-on-surface mb-6 leading-tight">A backend for lorem ipsum</h3>
+   347→<p class="font-body-lg text-body-lg text-on-surface-variant mb-10 max-w-md">
+   348→                        Robust infrastructure generated instantly. From authentication to database schemas, Horizon writes the backend so you can focus on the user experience.
+   349→                    </p>
+   350→</div>
+   351→<div class="flex-1 bg-surface relative overflow-hidden flex items-center justify-center backdrop-blur-md">
+   352→<div class="absolute inset-0 bg-gradient-to-br from-primary/30 via-primary/5 to-tertiary/10"></div>
+   353→<div class="absolute inset-0 opacity-30 mix-blend-soft-light" style="background-image: radial-gradient(circle at 50% 50%, #ffffff 0%, transparent 100%);"></div>
+   354→<div class="relative z-10 w-[80%] bg-white/60 backdrop-blur-[40px] rounded-3xl border border-white/60 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] p-8 overflow-hidden"><div class="flex items-center justify-between mb-6 border-b border-black/5 pb-6">
+   355→<div class="flex items-center gap-4">
+   356→<div class="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20 shadow-sm">
+   357→<span class="material-symbols-outlined text-primary text-xl">cloud_upload</span>
+   358→</div>
+   359→<div>
+   360→<span class="block text-on-surface font-bold text-base leading-none">Deployment</span>
+   361→<span class="text-on-surface-variant text-[10px] font-bold uppercase tracking-widest">v1.2.0-stable</span>
+   362→</div>
+   363→</div>
+   364→<!-- Sparkline Graph -->
+   365→<div class="flex flex-col items-end gap-1">
+   366→<div class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Health</div>
+   367→<svg class="w-16 h-6 overflow-visible" viewBox="0 0 60 20">
+   368→<path d="M0 15 L10 12 L20 18 L30 8 L40 10 L50 4 L60 6" fill="none" stroke="#27C93F" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+   369→</svg>
+   370→</div>
+   371→</div>
+   372→<div class="space-y-5">
+   373→<div class="space-y-3">
+   374→<div class="flex items-center justify-between text-[12px] font-semibold">
+   375→<div class="flex items-center gap-2">
+   376→<div class="w-1.5 h-1.5 rounded-full bg-[#27C93F] shadow-[0_0_8px_rgba(39,201,63,0.8)]"></div>
+   377→<span class="text-on-surface">Edge Runtime</span>
+   378→</div>
+   379→<span class="text-on-surface font-mono">99.9%</span>
+   380→</div>
+   381→<div class="h-1 w-full bg-black/5 rounded-full overflow-hidden border border-black/5">
+   382→<div class="h-full w-[88%] bg-gradient-to-r from-primary to-primary/60 rounded-full"></div>
+   383→</div>
+   384→</div>
+   385→<div class="pt-2 space-y-3">
+   386→<div class="flex items-center justify-between text-on-surface-variant text-[11px] font-medium">
+   387→<div class="flex items-center gap-2">
+   388→<span class="material-symbols-outlined text-[14px] font-bold text-[#27C93F]">verified_user</span>
+   389→<span class="">SSL Certification active</span>
+   390→</div>
+   391→<span class="font-mono opacity-60">12:45:01</span>
+   392→</div>
+   393→<div class="flex items-center justify-between text-on-surface-variant text-[11px] font-medium">
+   394→<div class="flex items-center gap-2">
+   395→<span class="material-symbols-outlined text-[14px] font-bold text-[#27C93F]">storage</span>
+   396→<span class="">Database migration 100%</span>
+   397→</div>
+   398→<span class="font-mono opacity-60">12:45:03</span>
+   399→</div>
+   400→<div class="flex items-center justify-between text-on-surface-variant text-[11px] font-medium">
+   401→<div class="flex items-center gap-2">
+   402→<div class="w-2 h-2 rounded-full border-2 border-primary/40 border-t-primary animate-spin"></div>
+   403→<span class="">CDN Edge propagation...</span>
+   404→</div>
+   405→<span class="font-mono opacity-60">Running</span>
+   406→</div>
+   407→</div>
+   408→<div class="mt-4 p-3 bg-white/80 rounded-xl border border-white shadow-sm flex items-center justify-between">
+   409→<div class="flex items-center gap-2">
+   410→<span class="material-symbols-outlined text-[#27C93F] text-[18px] font-bold">check_circle</span>
+   411→<span class="text-on-surface text-[12px] font-bold">Live in production</span>
+   412→</div>
+   413→<span class="text-on-surface-variant text-[10px] font-mono font-bold px-2 py-0.5 bg-black/5 rounded">0.4ms</span>
+   414→</div>
+   415→</div></div></div>
+   416→</div>
+   417→</section>
+   418→<!-- Section 5: Showcase -->
+   419→<section class="py-section-gap bg-surface relative overflow-hidden">
+   420→<div class="absolute inset-0" style="background-image: radial-gradient(#C084FC 1px, transparent 1px); background-size: 32px 32px; opacity: 0.2;"></div>
+   421→<div class="max-w-7xl mx-auto px-container-padding flex flex-col items-center justify-center mb-16 relative z-10">
+   422→<div class="text-center max-w-3xl mx-auto"><h2 class="text-headline-lg text-on-surface font-normal">Describe the outcome.<br>Horizon builds the structure.</h2></div>
+   423→</div>
+   424→<div class="w-full flex gap-6 overflow-x-auto px-8 pb-12 snap-x snap-mandatory hide-scrollbar relative z-10 justify-center">
+   425→<!-- Card 1 -->
+   426→<div class="snap-center shrink-0 w-[400px] h-[333px] bg-white/40 backdrop-blur-xl rounded-[10px] border border-white/60 shadow-sm flex flex-col overflow-hidden group">
+   427→<div class="h-full bg-[#38BDF8]/10 relative overflow-hidden p-6">
+   428→<div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
+   429→<div class="relative z-10 h-full bg-white/60 backdrop-blur-md rounded-[8px] border border-white/80 shadow-[0_4px_16px_rgba(0,0,0,0.02)] p-4">
+   430→<div class="h-4 w-24 rounded mb-6 w-fit"><span class="font-body-md text-on-surface-variant font-normal px-2">Streaming Dashboard</span></div>
+   431→<div class="grid grid-cols-2 gap-2 mb-4">
+   432→<div class="h-32 bg-[#38BDF8]/20 border border-white/50 rounded"></div>
+   433→<div class="h-32 bg-[#C084FC]/20 border border-white/50 rounded"></div>
+   434→</div>
+   435→<div class="h-8 bg-white/80 rounded"></div>
+   436→</div>
+   437→</div>
+   438→</div>
+   439→<!-- Card 2 -->
+   440→<div class="snap-center shrink-0 w-[400px] h-[333px] bg-white/40 backdrop-blur-xl rounded-[10px] border border-white/60 shadow-sm flex flex-col overflow-hidden group">
+   441→<div class="h-full bg-[#C084FC]/10 relative overflow-hidden p-6">
+   442→<div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
+   443→<div class="relative z-10 h-full bg-white/60 backdrop-blur-md rounded-[8px] border border-white/80 shadow-[0_4px_16px_rgba(0,0,0,0.02)] p-4 flex flex-col">
+   444→<div class="h-6 w-full rounded mb-4"><span class="font-body-md text-on-surface-variant font-normal px-2">Finance Ledger</span></div>
+   445→<div class="flex-1 border-t border-b border-white/40 flex flex-col gap-4 py-4">
+   446→<div class="h-4 bg-white/80 rounded w-full"></div>
+   447→<div class="h-4 bg-white/80 rounded w-5/6"></div>
+   448→<div class="h-4 bg-white/80 rounded w-full"></div>
+   449→</div>
+   450→<div class="h-8 w-24 bg-[#FF5E3A]/60 backdrop-blur border border-white/50 mt-auto rounded-full self-end"></div>
+   451→</div>
+   452→</div>
+   453→</div>
+   454→<!-- Card 3 -->
+   455→<div class="snap-center shrink-0 w-[400px] h-[333px] bg-white/40 backdrop-blur-xl rounded-[10px] border border-white/60 shadow-sm flex flex-col overflow-hidden group">
+   456→<div class="h-full bg-[#FF9A9E]/10 relative overflow-hidden p-6">
+   457→<div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
+   458→<div class="relative z-10 h-full bg-white/60 backdrop-blur-md rounded-[8px] border border-white/80 shadow-[0_4px_16px_rgba(0,0,0,0.02)] p-4">
+   459→<div class="flex gap-2 mb-4">
+   460→<div class="w-10 h-10 rounded-full bg-[#FF5E3A]/20 border border-white/50"></div>
+   461→<div class="flex-1 h-10 rounded"><span class="font-body-md text-on-surface-variant font-normal px-2 flex items-center h-full">Travel Planner</span></div>
+   462→</div>
+   463→<div class="h-40 bg-white/50 rounded-lg border border-white/60"></div>
+   464→</div>
+   465→</div>
+   466→</div>
+   467→<!-- Card 4 -->
+   468→<div class="snap-center shrink-0 w-[400px] h-[333px] bg-white/40 backdrop-blur-xl rounded-[10px] border border-white/60 shadow-sm flex flex-col overflow-hidden group">
+   469→<div class="h-full bg-[#FFD166]/10 relative overflow-hidden p-6">
+   470→<div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent"></div>
+   471→<div class="relative z-10 h-full bg-white/60 backdrop-blur-md rounded-[8px] border border-white/80 shadow-[0_4px_16px_rgba(0,0,0,0.02)] p-4 grid grid-cols-2 gap-4">
+   472→<div class="bg-white/80 rounded aspect-square"></div>
+   473→<div class="bg-white/80 rounded aspect-square"></div>
+   474→<div class="bg-white/80 rounded aspect-square"></div>
+   475→<div class="bg-white/80 rounded aspect-square"></div>
+   476→</div>
+   477→</div>
+   478→</div>
+   479→</div>
+   480→</section>
+   481→<!-- Section 6: Pricing -->
+   482→<section class="py-section-gap px-container-padding">
+   483→<div class="max-w-[1516px] mx-auto relative z-10">
+   484→<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+   485→<!-- Column 1: Info -->
+   486→<div class="p-8 flex flex-col bg-white/40 backdrop-blur-xl rounded-[10px] border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.02)]">
+   487→<div class="flex flex-col justify-between h-full">
+   488→<div class="space-y-4">
+   489→<h2 class="font-display-xl text-[38px] leading-tight text-on-surface">Plans that grow with your ideas</h2>
+   490→<p class="font-body-lg text-body-lg text-on-surface-variant">Choose the plan that fits your ambition. No hidden fees.</p>
+   491→</div>
+   492→<div class="pt-12">
+   493→<svg class="h-12 w-12 text-on-surface opacity-80" fill="none" height="48" viewBox="0 0 32 32" width="48" xmlns="http://www.w3.org/2000/svg">
+   494→<circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"></circle>
+   495→<path d="M11 10V22M21 10V22M11 16H21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+   496→</svg>
+   497→</div>
+   498→</div>
+   499→</div>
+   500→<!-- Column 2: Free -->
+   501→<div class="p-8 bg-white/40 backdrop-blur-xl rounded-[10px] border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] flex flex-col relative overflow-hidden">
+   502→<div class="absolute inset-0 bg-gradient-to-b from-[#38BDF8]/10 to-transparent -z-10"></div>
+   503→<h3 class="font-headline-md text-[38px] text-on-surface mb-2">Basic</h3>
+   504→<div class="font-display-xl text-[56px] text-on-surface mb-6">$0<span class="font-body-md text-body-md text-on-surface-variant">/mo</span></div>
+   505→<ul class="space-y-4 mb-8 flex-1 font-body-md text-body-md text-on-surface-variant">
+   506→<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary">check</span> 3 Projects</li>
+   507→<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary">check</span> Community Support</li>
+   508→<li class="flex items-center gap-3"><span class="material-symbols-outlined text-primary">check</span> Basic UI Components</li>
+   509→</ul>
+   510→<button class="w-full bg-white/50 backdrop-blur-md border border-white/60 shadow-sm text-on-surface rounded-[8px] py-4 font-body-md text-body-md hover:bg-white/70 transition-colors">Get Started</button>
+   511→</div>
+   512→<!-- Column 3: Pro -->
+   513→<div class="p-8 bg-white/40 backdrop-blur-xl rounded-[10px] border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)] flex flex-col relative overflow-hidden">
+   514→<div class="absolute inset-0 bg-gradient-to-b from-[#C084FC]/20 to-[#FF9A9E]/20 -z-10"></div>
+   515→<div class="flex items-center justify-between mb-2">
+   516→<h3 class="font-headline-md text-[38px] text-on-surface">Scale</h3>
+   517→<div class="bg-white/60 backdrop-blur-md border border-white/80 text-on-surface shadow-sm text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">Popular</div>
+   518→</div>
+   519→<div class="font-display-xl text-[56px] text-on-surface mb-6">$20<span class="font-body-md text-body-md text-on-surface-variant">/mo</span></div>
+   520→<ul class="space-y-4 mb-8 flex-1 font-body-md text-body-md text-on-surface-variant">
+   521→<li class="flex items-center gap-3"><span class="material-symbols-outlined text-on-surface">check</span> Unlimited Projects</li>
+   522→<li class="flex items-center gap-3"><span class="material-symbols-outlined text-on-surface">check</span> Priority Support</li>
+   523→<li class="flex items-center gap-3"><span class="material-symbols-outlined text-on-surface">check</span> Custom Domains</li>
+   524→<li class="flex items-center gap-3"><span class="material-symbols-outlined text-on-surface">check</span> Advanced Integrations</li>
+   525→</ul>
+   526→<button class="w-full bg-white/50 backdrop-blur-md border border-white/60 shadow-sm text-on-surface rounded-[8px] py-4 font-body-md text-body-md hover:bg-white/70 transition-colors">Upgrade to Pro</button>
+   527→</div>
+   528→</div>
+   529→<div class="mt-8 bg-white/40 backdrop-blur-xl rounded-[10px] p-8 flex flex-col md:flex-row items-center justify-between border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.02)] relative overflow-hidden">
+   530→<div class="absolute inset-0 bg-[#38BDF8]/5 -z-10"></div>
+   531→<div>
+   532→<h4 class="font-headline-md text-[28px] text-on-surface mb-2">Enterprise needs?</h4>
+   533→<p class="font-body-md text-body-md text-on-surface-variant">Custom SLAs, dedicated account management, and more.</p>
+   534→</div>
+   535→<button class="mt-4 md:mt-0 bg-white/50 backdrop-blur-md border border-white/60 shadow-sm text-on-surface rounded-[8px] px-8 py-3 font-body-md text-body-md hover:bg-white/70 transition-colors">Contact Sales</button>
+   536→</div>
+   537→</div>
+   538→</section>
+   539→<!-- Section 7: FAQ -->
+   540→<section class="py-section-gap px-container-padding bg-surface">
+   541→<div class="max-w-[1515px] mx-auto flex flex-col lg:flex-row gap-16">
+   542→<div class="lg:w-1/3">
+   543→<h2 class="font-display-xl text-[60px] leading-[1.1] text-on-surface sticky top-32">
+   544→                        Frequently asked questions
+   545→                    </h2>
+   546→</div>
+   547→<div class="lg:w-2/3 flex flex-col">
+   548→<!-- FAQ Item 1 -->
+   549→<div class="border-b border-outline-variant/30 py-4 group cursor-pointer flex items-center">
+   550→<div class="flex justify-between items-center w-full">
+   551→<h3 class="text-headline-md text-on-surface group-hover:text-primary transition-colors text-xl font-light">What is Horizon?</h3>
+   552→<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">add</span>
+   553→</div>
+   554→</div>
+   555→<!-- FAQ Item 2 -->
+   556→<div class="border-b border-outline-variant/30 py-4 group cursor-pointer flex items-center">
+   557→<div class="flex justify-between items-center w-full">
+   558→<h3 class="text-headline-md text-on-surface group-hover:text-primary transition-colors text-xl font-light">How does Horizon work?</h3>
+   559→<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">add</span>
+   560→</div>
+   561→</div>
+   562→<!-- FAQ Item 3 -->
+   563→<div class="border-b border-outline-variant/30 py-4 group cursor-pointer flex items-center">
+   564→<div class="flex justify-between items-center w-full">
+   565→<h3 class="text-headline-md text-on-surface group-hover:text-primary transition-colors text-xl font-light">Can I export my code?</h3>
+   566→<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">add</span>
+   567→</div>
+   568→</div>
+   569→<!-- FAQ Item 4 -->
+   570→<div class="border-b border-outline-variant/30 py-4 group cursor-pointer flex items-center">
+   571→<div class="flex justify-between items-center w-full">
+   572→<h3 class="text-headline-md text-on-surface group-hover:text-primary transition-colors text-xl font-light">Is there a free trial?</h3>
+   573→<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">add</span>
+   574→</div>
+   575→</div>
+   576→<div class="border-b border-outline-variant/30 py-4 group cursor-pointer flex items-center"><div class="flex justify-between items-center w-full"><h3 class="text-headline-md text-on-surface group-hover:text-primary transition-colors text-xl font-light">How secure is my data on Horizon?</h3><span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">add</span></div></div><div class="border-b border-outline-variant/30 py-4 group cursor-pointer flex items-center"><div class="flex justify-between items-center w-full"><h3 class="text-headline-md text-on-surface group-hover:text-primary transition-colors text-xl font-light">Can I collaborate with my team in real-time?</h3><span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">add</span></div></div><div class="border-b border-outline-variant/30 py-4 group cursor-pointer flex items-center"><div class="flex justify-between items-center w-full"><h3 class="text-headline-md text-on-surface group-hover:text-primary transition-colors text-xl font-light">Do you offer custom enterprise solutions?</h3><span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">add</span></div></div><div class="border-b border-outline-variant/30 py-4 group cursor-pointer flex items-center"><div class="flex justify-between items-center w-full"><h3 class="text-headline-md text-on-surface group-hover:text-primary transition-colors text-xl font-light">What kind of support is available for the free plan?</h3><span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors">add</span></div></div></div>
+   577→</div>
+   578→</section>
+   579→<!-- Section 8: Final CTA -->
+   580→<section class="py-section-gap px-container-padding relative overflow-hidden flex flex-col items-center justify-center min-h-[70vh] group/cta" onmousemove="this.style.setProperty('--mouse-x', event.clientX - this.getBoundingClientRect().left + 'px'); this.style.setProperty('--mouse-y', event.clientY - this.getBoundingClientRect().top + 'px');" style="--mouse-x: 754px; --mouse-y: 582.4375px;">
+   581→<!-- Vibrant moving gradient background -->
+   582→<div class="absolute inset-0 bg-surface -z-10"></div>
+   583→<!-- Sophisticated deep gradient base -->
+   584→<div class="absolute inset-0 opacity-20 -z-10" style="background: radial-gradient(circle at 10% 20%, #312e81 0%, transparent 50%), radial-gradient(circle at 90% 80%, #581c87 0%, transparent 50%), radial-gradient(circle at 50% 50%, #134e4a 0%, transparent 70%);"></div>
+   585→<!-- Interactive cursor-following glow -->
+   586→<div class="absolute inset-0 -z-10 opacity-0 group-hover/cta:opacity-40 transition-opacity duration-500" style="background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(99, 102, 241, 0.4), rgba(168, 85, 247, 0.3), transparent 60%);"></div>
+   587→<h2 class="font-display-xl text-[54px] leading-tight mb-10 text-center relative z-10 max-w-2xl drop-shadow-sm text-on-surface">
+   588→    Let’s build what’s<br>on your horizon
+   589→</h2>
+   590→<a class="inline-flex items-center gap-3 bg-white/40 backdrop-blur-md border border-white/60 font-body-md text-body-md font-medium px-6 py-2.5 rounded-full hover:bg-white/60 hover:scale-105 transition-all shadow-sm group relative z-10 text-on-surface" href="#">
+   591→    Get started
+   592→    <div class="w-5 h-5 flex items-center justify-center">
+   593→<span class="material-symbols-outlined text-on-surface text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_forward</span>
+   594→</div>
+   595→</a>
+   596→</section>
+   597→</main>
+   598→<!-- Footer Component -->
+   599→<footer class="bg-transparent w-full py-8 text-secondary dark:text-secondary-fixed-dim font-body-md text-body-md relative z-20 -mt-[80px]">
+   600→<div class="max-w-[1515px] mx-auto px-container-padding flex flex-col md:flex-row justify-between items-center gap-8">
+   601→<div class="font-display-xl text-headline-md hover:opacity-100 transition-opacity flex items-center gap-2 text-on-surface">
+   602→<svg class="h-6 w-6 text-on-surface" fill="none" height="24" viewBox="0 0 32 32" width="24" xmlns="http://www.w3.org/2000/svg">
+   603→<circle cx="16" cy="16" r="15" stroke="currentColor" stroke-width="2"></circle>
+   604→<path d="M11 10V22M21 10V22M11 16H21" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+   605→</svg>
+   606→</div>
+   607→<div class="flex flex-wrap items-center justify-center gap-6">
+   608→<a class="hover:text-white/80 transition-colors hover:opacity-100 transition-opacity text-on-surface" href="#">Privacy Policy</a>
+   609→<a class="hover:text-white/80 transition-colors hover:opacity-100 transition-opacity text-on-surface" href="#">Terms of Service</a>
+   610→<a class="hover:text-white/80 transition-colors hover:opacity-100 transition-opacity text-on-surface" href="#">Security</a>
+   611→<a class="hover:text-white/80 transition-colors hover:opacity-100 transition-opacity text-on-surface" href="#">Status</a>
+   612→<a class="hover:text-white/80 transition-colors hover:opacity-100 transition-opacity text-on-surface" href="#">Contact</a>
+   613→</div>
+   614→<div class="text-sm text-on-surface">
+   615→                © 2024 Horizon AI. Built for the future of SaaS.
+   616→            </div>
+   617→</div>
+   618→</footer>
+   619→<div id="custom-cursor" style="transform: translate3d(761.895px, 6153.24px, 0px) translate(-50%, -50%); display: block;"></div>
+   620→<script>
+   621→    const cursor = document.getElementById('custom-cursor');
+   622→    let mouseX = 0;
+   623→    let mouseY = 0;
+   624→    let cursorX = 0;
+   625→    let cursorY = 0;
+   626→
+   627→    document.addEventListener('mousemove', (e) => {
+   628→        mouseX = e.clientX;
+   629→        mouseY = e.clientY;
+   630→        if (cursor.style.display === 'none') {
+   631→            cursor.style.display = 'block';
+   632→            cursorX = mouseX;
+   633→            cursorY = mouseY;
+   634→        }
+   635→    });
+   636→
+   637→    function animate() {
+   638→        let dx = mouseX - cursorX;
+   639→        let dy = mouseY - cursorY;
+   640→
+   641→        cursorX += dx * 0.2;
+   642→        cursorY += dy * 0.2;
+   643→
+   644→        cursor.style.transform = `translate3d(${cursorX}px, ${cursorY}px, 0) translate(-50%, -50%)`;
+   645→
+   646→        requestAnimationFrame(animate);
+   647→    }
+   648→    animate();
+   649→
+   650→    document.addEventListener('mouseenter', () => {
+   651→        cursor.style.display = 'block';
+   652→    });
+   653→
+   654→    document.addEventListener('mouseleave', () => {
+   655→        cursor.style.display = 'none';
+   656→    });
+   657→</script>
+   658→
+   659→
+   660→</body></html>
