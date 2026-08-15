@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
+import { signOut } from 'next-auth/react';
+
 interface NavItem {
   icon: React.ReactNode;
   label: string;
@@ -135,6 +137,7 @@ export default function AppSidebar() {
 
         {/* Logout Button */}
         <button
+          onClick={() => signOut()}
           className="h-11 flex items-center gap-3 px-3 rounded-lg text-muted-foreground hover:bg-black/5 hover:text-foreground transition-colors duration-150"
         >
           <span className="shrink-0 flex items-center justify-center w-5">

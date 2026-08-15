@@ -86,18 +86,18 @@ function AppShell() {
         className="transition-all duration-300 ease-out"
         style={{ marginLeft: sidebarOpen ? 256 : 80 }}
       >
-        <header className="sticky top-0 z-30 h-16 flex items-center gap-4 px-6 border-b border-black/5 bg-white/60 backdrop-blur-xl">
+        <header className="lg:hidden sticky top-0 z-30 h-16 flex items-center gap-4 px-6 border-b border-black/5 bg-white/60 backdrop-blur-xl">
           <button
             onClick={toggleSidebar}
-            className="lg:hidden h-10 w-10 rounded-xl flex items-center justify-center hover:bg-black/5 transition-colors"
+            className="h-10 w-10 rounded-xl flex items-center justify-center hover:bg-black/5 transition-colors"
             aria-label="Toggle sidebar"
           >
             <Menu size={20} className="text-foreground" />
           </button>
-          <ViewHeader view={currentView} />
         </header>
 
         <main className="p-6">
+          <ViewHeader view={currentView} />
           <AnimatePresence mode="wait">
             <motion.div
               key={currentView}
