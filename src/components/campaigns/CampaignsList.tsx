@@ -16,7 +16,7 @@ const platformColors: Record<string, string> = {
 const statusColors: Record<string, string> = {
   active: 'bg-green-100 text-green-700 border-green-200',
   paused: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-  draft: 'bg-gray-100 text-gray-600 border-gray-200',
+  draft: 'bg-gray-100 text-gray-600 border-gray-200', 
   completed: 'bg-blue-100 text-blue-700 border-blue-200',
 };
 

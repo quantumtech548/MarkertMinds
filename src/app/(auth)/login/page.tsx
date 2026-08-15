@@ -1,19 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAppStore } from "@/store/use-app-store";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  // Derive the OAuth error message from the URL during render instead of
+  // syncing it into state via an effect (avoids cascading renders).
+  const urlError = searchParams.get("error");
+  const urlErrorMessage =
+    urlError === "OAuthAccountNotLinked"
+      ? "This email is already registered with a different sign-in method. Please use your original sign-in method, or try again."
+      : urlError
+        ? "An authentication error occurred. Please try again."
+        : "";
+
+  const displayError = error || urlErrorMessage;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +44,12 @@ export default function LoginPage() {
       if (res?.error) {
         setError("Invalid email or password");
       } else {
-        router.push("/dashboard"); // or wherever you want to redirect
+        // Update the app store so the Home component renders the dashboard instead of landing/onboarding
+        const store = useAppStore.getState();
+        store.setView("dashboard");
+        store.completeOnboarding(store.onboardingData);
+
+        router.push("/");
         router.refresh();
       }
     } catch (err) {
@@ -41,7 +60,7 @@ export default function LoginPage() {
   };
 
   const handleGoogleLogin = () => {
-    signIn("google", { callbackUrl: "/dashboard" });
+    signIn("google", { callbackUrl: "/" });
   };
 
   return (
@@ -88,7 +107,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {error && <p className="text-sm text-red-500 text-center">{error}</p>}
+          {displayError && <p className="text-sm text-red-500 text-center">{displayError}</p>}
 
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Signing in..." : "Sign in"}
@@ -151,3 +170,20 @@ export default function LoginPage() {
     </div>
   );
 }
+
+export default function LoginPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
+          <div className="w-full max-w-md rounded-xl bg-white dark:bg-gray-800 p-8 shadow-xl ring-1 ring-gray-200 dark:ring-gray-700 text-center text-gray-500 dark:text-gray-400">
+            Loading...
+          </div>
+        </div>
+      }
+    >
+      <LoginForm />
+    </Suspense>
+  );
+}
+

@@ -105,7 +105,7 @@ export default function AdminView() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between bg-white/60 backdrop-blur-xl border border-white/60 rounded-full px-6 py-3">
         <div className="flex items-center gap-2">
           <Settings className="h-5 w-5 text-muted-foreground" />
           <h2 className="text-lg font-semibold">Admin & Settings</h2>

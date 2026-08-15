@@ -1,5 +1,6 @@
 'use client';
 
+import { useSession } from 'next-auth/react';
 import { useAppStore } from '@/store/use-app-store';
 import LandingPage from '@/components/landing/LandingPage';
 import OnboardingFlow from '@/components/onboarding/OnboardingFlow';
@@ -117,15 +118,26 @@ function AppShell() {
 }
 
 export default function Home() {
+  const { data: session, status } = useSession();
   const { currentView, onboardingComplete } = useAppStore();
 
-  if (currentView === 'landing') {
-    return <LandingPage />;
+  // If user is authenticated, show the app (dashboard/onboarding) regardless of store state
+  if (status === 'authenticated') {
+    if (currentView === 'onboarding' || !onboardingComplete) {
+      return <OnboardingFlow />;
+    }
+    return <AppShell />;
   }
 
-  if (currentView === 'onboarding' || !onboardingComplete) {
-    return <OnboardingFlow />;
+  // If still loading session, show a quick loading state
+  if (status === 'loading') {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
+        <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full" />
+      </div>
+    );
   }
 
-  return <AppShell />;
+  // Not authenticated — show the landing page
+  return <LandingPage />;
 }

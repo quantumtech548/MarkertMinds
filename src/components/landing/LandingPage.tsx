@@ -1,13 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowRight, BarChart3, Bot, Zap, Target, Search, Users, Sparkles, ChevronRight } from 'lucide-react';
 import { useAppStore } from '@/store/use-app-store';
-
-/* ============================================================
-   Animation Variants
-   ============================================================ */
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -26,10 +23,6 @@ const scaleIn = {
   hidden: { opacity: 0, scale: 0.9 },
   visible: { opacity: 1, scale: 1 },
 };
-
-/* ============================================================
-   Counter Hook
-   ============================================================ */
 
 function useCounter(end: number, duration = 2000, shouldStart: boolean) {
   const [count, setCount] = useState(0);
@@ -86,8 +79,9 @@ export default function LandingPage() {
   }, []);
 
   /* ---------- CTA Handler ---------- */
+  const router = useRouter();
   const handleGetStarted = () => {
-    useAppStore.getState().setView('onboarding');
+    router.push('/signup');
   };
 
   /* ---------- CTA Glow Effect ---------- */
@@ -129,9 +123,6 @@ export default function LandingPage() {
   const handleHoverStart = () => cursorRef.current?.classList.add('hovering');
   const handleHoverEnd = () => cursorRef.current?.classList.remove('hovering');
 
-  /* ============================================================
-     Render
-     ============================================================ */
 
   return (
     <div className="relative min-h-screen bg-white overflow-hidden font-[Plus_Jakarta_Sans]">
@@ -170,17 +161,27 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleGetStarted}
-            onMouseEnter={handleHoverStart}
-            onMouseLeave={handleHoverEnd}
-            className="px-5 py-2 bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] text-white text-sm font-semibold rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300"
-          >
-            Get Started
-          </motion.button>
+          {/* Actions */}
+          <div className="flex items-center gap-4">
+            <a
+              href="/login"
+              onMouseEnter={handleHoverStart}
+              onMouseLeave={handleHoverEnd}
+              className="hidden md:block text-sm font-semibold text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              Log in
+            </a>
+            <motion.a
+              href="/signup"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onMouseEnter={handleHoverStart}
+              onMouseLeave={handleHoverEnd}
+              className="px-5 py-2 bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] text-white text-sm font-semibold rounded-full shadow-lg hover:shadow-xl transition-shadow duration-300 block"
+            >
+              Sign Up
+            </motion.a>
+          </div>
         </div>
       </motion.nav>
 

@@ -93,9 +93,19 @@ function Carousel({
     setApi(api)
   }, [api, setApi])
 
+  // Sync the scroll state when the Embla API becomes available by adjusting
+  // state during render (avoids calling setState synchronously in an effect).
+  const [prevApi, setPrevApi] = React.useState(api)
+  if (api !== prevApi) {
+    setPrevApi(api)
+    if (api) {
+      setCanScrollPrev(api.canScrollPrev())
+      setCanScrollNext(api.canScrollNext())
+    }
+  }
+
   React.useEffect(() => {
     if (!api) return
-    onSelect(api)
     api.on("reInit", onSelect)
     api.on("select", onSelect)
 
@@ -103,6 +113,7 @@ function Carousel({
       api?.off("select", onSelect)
     }
   }, [api, onSelect])
+
 
   return (
     <CarouselContext.Provider
