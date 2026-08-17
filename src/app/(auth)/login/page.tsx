@@ -8,6 +8,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import MarketMindLogo from "@/components/ui/logo";
 
 function LoginForm() {
   const router = useRouter();
@@ -64,13 +65,21 @@ function LoginForm() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900 p-4">
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-white dark:bg-gray-800 p-8 shadow-xl ring-1 ring-gray-200 dark:ring-gray-700">
+    <div className="relative flex min-h-screen items-center justify-center bg-white dark:bg-gray-900 p-4 font-[Plus_Jakarta_Sans] overflow-hidden">
+      {/* Floating backgrounds */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#FF5E3A]/5 via-[#C084FC]/5 to-[#38BDF8]/5 pointer-events-none" />
+      <div className="absolute -top-24 -left-24 w-96 h-96 bg-[#FF5E3A]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -right-24 w-96 h-96 bg-[#C084FC]/10 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="relative w-full max-w-md space-y-8 rounded-3xl bg-white/60 backdrop-blur-xl dark:bg-gray-800/60 p-8 shadow-xl border border-white/80 dark:border-gray-700/80">
         <div className="text-center">
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900 dark:text-white">
+          <div className="flex justify-center mb-4">
+            <MarketMindLogo size={56} />
+          </div>
+          <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
             Welcome back
           </h2>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
             Sign in to your account to continue
           </p>
         </div>
