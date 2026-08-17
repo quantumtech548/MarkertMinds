@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { ArrowRight, BarChart3, Bot, Zap, Target, Search, Users, Sparkles, ChevronRight } from 'lucide-react';
 import { useAppStore } from '@/store/use-app-store';
+import MarketMindLogo from '@/components/ui/logo';
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -138,24 +139,26 @@ export default function LandingPage() {
       >
         <div className="bg-white/40 backdrop-blur-xl border border-white/60 shadow-lg rounded-full px-6 py-3 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF5E3A] to-[#C084FC] flex items-center justify-center">
-              <span className="text-white font-extrabold text-sm">H</span>
-            </div>
+          <div className="flex items-center gap-1">
+            <MarketMindLogo size={32} />
             <span className="font-bold text-lg gradient-text">MarketMind</span>
           </div>
 
           {/* Nav Links - hidden on mobile */}
           <div className="hidden md:flex items-center gap-8">
-            {['Product', 'Features', 'Pricing'].map((link) => (
+            {[
+              { label: 'Product', href: '/' },
+              { label: 'Features', href: '/features' },
+              { label: 'Pricing', href: '/pricing' }
+            ].map((link) => (
               <a
-                key={link}
-                href={`#${link.toLowerCase()}`}
+                key={link.label}
+                href={link.href}
                 className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors relative group"
                 onMouseEnter={handleHoverStart}
                 onMouseLeave={handleHoverEnd}
               >
-                {link}
+                {link.label}
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gradient-to-r from-[#FF5E3A] to-[#C084FC] group-hover:w-full transition-all duration-300" />
               </a>
             ))}
@@ -282,10 +285,10 @@ export default function LandingPage() {
             className="flex flex-wrap justify-center gap-3"
           >
             {[
-              { label: 'Analytics Dashboard', icon: BarChart3, color: '#FF5E3A' },
-              { label: 'Lead Generation', icon: Users, color: '#C084FC' },
-              { label: 'SEO Optimization', icon: Search, color: '#38BDF8' },
-              { label: 'Ad Campaigns', icon: Target, color: '#FF5E3A' },
+              { label: 'Analytics Dashboard', icon: BarChart3, color: '#FF5E3A', tab: 'analytics' },
+              { label: 'Lead Generation', icon: Users, color: '#C084FC', tab: 'leads' },
+              { label: 'SEO Optimization', icon: Search, color: '#38BDF8', tab: 'seo' },
+              { label: 'Ad Campaigns', icon: Target, color: '#FF5E3A', tab: 'campaigns' },
             ].map((item) => (
               <motion.button
                 key={item.label}
@@ -293,6 +296,7 @@ export default function LandingPage() {
                 whileTap={{ scale: 0.95 }}
                 onMouseEnter={handleHoverStart}
                 onMouseLeave={handleHoverEnd}
+                onClick={() => router.push(`/features?tab=${item.tab}`)}
                 className="flex items-center gap-2 px-4 py-2 rounded-full glass text-sm font-medium text-gray-700 hover:shadow-md transition-shadow duration-300"
               >
                 <item.icon className="w-4 h-4" style={{ color: item.color }} />
@@ -735,10 +739,8 @@ export default function LandingPage() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             {/* Logo & Tagline */}
             <div className="flex flex-col items-center md:items-start gap-2">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#FF5E3A] to-[#C084FC] flex items-center justify-center">
-                  <span className="text-white font-extrabold text-sm">H</span>
-                </div>
+              <div className="flex items-center gap-1">
+                <MarketMindLogo size={32} />
                 <span className="font-bold text-lg gradient-text">MarketMind</span>
               </div>
               <p className="text-sm text-gray-400">Your AI-powered marketing operating system.</p>
@@ -746,15 +748,21 @@ export default function LandingPage() {
 
             {/* Footer Links */}
             <div className="flex flex-wrap items-center justify-center gap-6">
-              {['Product', 'Features', 'Pricing', 'Privacy', 'Terms'].map((link) => (
+              {[
+                { label: 'Product', href: '/' },
+                { label: 'Features', href: '/features' },
+                { label: 'Pricing', href: '/pricing' },
+                { label: 'Privacy', href: '/privacy' },
+                { label: 'Terms', href: '/terms' }
+              ].map((link) => (
                 <a
-                  key={link}
-                  href="#"
+                  key={link.label}
+                  href={link.href}
                   className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
                   onMouseEnter={handleHoverStart}
                   onMouseLeave={handleHoverEnd}
                 >
-                  {link}
+                  {link.label}
                 </a>
               ))}
             </div>

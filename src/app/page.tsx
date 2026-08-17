@@ -16,6 +16,7 @@ import IntegrationsView from '@/components/integrations/IntegrationsView';
 import AdminView from '@/components/admin/AdminView';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu } from 'lucide-react';
+import MarketMindLogo from '@/components/ui/logo';
 
 const viewMeta: Record<string, { title: string; description: string }> = {
   dashboard: { title: 'Dashboard', description: 'Overview of your marketing performance' },
@@ -37,9 +38,12 @@ function ViewHeader({ view }: { view: string }) {
   const meta = viewMeta[view];
   if (!meta || view === 'chat') return null;
   return (
-    <div className="mb-6">
-      <h1 className="text-2xl font-bold tracking-tight">{meta.title}</h1>
-      <p className="text-sm text-muted-foreground mt-1">{meta.description}</p>
+    <div className="mb-6 flex items-center gap-3">
+      {view === 'dashboard' && <MarketMindLogo size={36} />}
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">{meta.title}</h1>
+        <p className="text-sm text-muted-foreground mt-1">{meta.description}</p>
+      </div>
     </div>
   );
 }

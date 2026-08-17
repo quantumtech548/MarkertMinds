@@ -2,6 +2,7 @@
 
 import { useAppStore } from '@/store/use-app-store';
 import type { AppView } from '@/types';
+import MarketMindLogo from '@/components/ui/logo';
 import {
   LayoutDashboard,
   MessageSquare,
@@ -45,10 +46,8 @@ export default function AppSidebar() {
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       {/* Logo Area */}
-      <div className="h-16 flex items-center gap-3 px-4 shrink-0">
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF5E3A] to-[#C084FC] flex items-center justify-center shrink-0">
-          <Bot size={22} className="text-white" />
-        </div>
+      <div className="h-16 flex items-center gap-2 px-5 shrink-0">
+        <MarketMindLogo size={36} />
         <AnimatePresence>
           {sidebarOpen && (
             <motion.span

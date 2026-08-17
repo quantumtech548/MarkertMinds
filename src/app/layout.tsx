@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   description: "Your AI-Powered Digital Marketing Operating System. Analyze data, generate strategies, and take actions across all marketing platforms.",
   keywords: ["AI Marketing", "Digital Marketing", "Ad Campaigns", "Lead Generation", "SEO", "Marketing Automation"],
   icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
+    icon: "/logo.jpg",
   },
 };
 
